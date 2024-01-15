@@ -2,6 +2,7 @@
 
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
+using BulkyBook.Models.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
@@ -20,35 +21,49 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
 		public IActionResult Index()
 		{
 			List<Product> objProductList = _unitofWork.Product.GetAll().ToList();
-			
+
 			return View(objProductList);
 		}
 
 		public IActionResult Create()
 		{
-			IEnumerable<SelectListItem> CategoryList = _unitofWork.Category
+			ProductVM productVM = new()
+			{
+				CategoryList = _unitofWork.Category
+				.GetAll().Select(u => new SelectListItem
+				{
+					Text = u.Name ,
+					Value = u.Id.ToString() ,
+
+				}) ,
+				Product = new Product()
+			};
+			return View(productVM);
+		}
+		[HttpPost]
+		public IActionResult Create(ProductVM productVM)
+		{
+
+			if(ModelState.IsValid)
+			{
+				_unitofWork.Product.Add(productVM.Product);
+				_unitofWork.Save();
+				TempData["success"] = "Product created successfully";
+				return RedirectToAction("Index" , "Product");
+			}
+			else
+			{
+				productVM.CategoryList = _unitofWork.Category
 				.GetAll().Select(u => new SelectListItem
 				{
 					Text = u.Name ,
 					Value = u.Id.ToString() ,
 
 				});
-			//ViewBag.CategoryList = CategoryList;		
-			ViewData["CategoryList"] = CategoryList;		
-			return View();
-		}
-		[HttpPost]
-		public IActionResult Create(Product obj)
-		{
 
-			if(ModelState.IsValid)
-			{
-				_unitofWork.Product.Add(obj);
-				_unitofWork.Save();
-				TempData["success"] = "Product created successfully";
-				return RedirectToAction("Index" , "Product");
+				return View(productVM);
 			}
-			return View(obj);
+
 		}
 
 
