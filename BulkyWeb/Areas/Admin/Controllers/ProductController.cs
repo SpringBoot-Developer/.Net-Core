@@ -13,7 +13,7 @@ using System.Linq;
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	[Authorize(Roles = SD.Role_Admin)]
+	//[Authorize(Roles = SD.Role_Admin)]
 	public class ProductController : Controller
 	{
 		/* Index is the Action method here */
