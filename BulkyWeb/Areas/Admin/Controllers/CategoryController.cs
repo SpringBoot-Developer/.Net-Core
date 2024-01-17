@@ -11,7 +11,7 @@ using System.Linq;
 namespace BulkyBookWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    //[Authorize(Roles=SD.Role_Admin)]
+    [Authorize(Roles=SD.Role_Admin)]
     public class CategoryController : Controller
     {
         /* Index is the Action method here */
@@ -56,8 +56,7 @@ namespace BulkyBookWeb.Areas.Admin.Controllers
                 return NotFound();
             }
             Category? CategoryFromDb = _unitofWork.Category.Get(u => u.Id == id);
-            /*	Category? CategoryFromDb1 = _db.Categories.FirstOrDefault(u => u.Id == id);
-				Category? CategoryFromDb2 = _db.Categories.Where(u => u.Id == id).FirstOrDefault();*/
+
 
             if (CategoryFromDb == null)
             {
